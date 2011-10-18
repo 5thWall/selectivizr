@@ -453,6 +453,19 @@ References:
 		}
 		return EMPTY_STRING;
 	};
+	
+	// --[ parseJSONStyleSheet() ]------------------------------------------
+	function parseJSONStyleSheet( css ) {
+	  if (css) {
+	    return css.replace(RE_COMMENT, EMPTY_STRING).
+          replace(RE_ASSET_URL, function( match, isBehavior, quoteChar, assetUrl ) {
+		    quoteChar = quoteChar || EMPTY_STRING;
+            return isBehavior ? match : "url(" + quoteChar + resolveUrl(assetUrl, slvzr.remoteUrl, true) + quoteChar +") ";
+		});
+	  }
+	  
+	  return EMPTY_STRING;
+	}
 
 	// --[ getStyleSheets() ]-----------------------------------------------
 	function getStyleSheets() {
@@ -467,6 +480,14 @@ References:
 			}
 		}
 	};
+	
+	// --[ getJSONStyleSheets() ]-------------------------------------------
+	function getJSONStyleSheets() {
+		for (var c = 0; c < slvzr.styleSheets.length; c++) {
+			stylesheet = slvzr.styleSheets[c];
+			doc.write("<style rel='text/css'>" + patchStyleSheet( parseJSONStyleSheet( stylesheet ) ) + "</style>");
+		}
+	}
 
 	// --[ init() ]---------------------------------------------------------
 	function init() {
@@ -497,6 +518,7 @@ References:
 	var baseTags = doc.getElementsByTagName("BASE");
 	var baseUrl = (baseTags.length > 0) ? baseTags[0].href : doc.location.href;
 	getStyleSheets();
+	getJSONStyleSheets();
 
 	// Bind selectivizr to the ContentLoaded event. 
 	ContentLoaded(win, function() {
