@@ -484,8 +484,9 @@ References:
 	// --[ getJSONStyleSheets() ]-------------------------------------------
 	function getJSONStyleSheets() {
 		for (var c = 0; c < slvzr.styleSheets.length; c++) {
-			stylesheet = slvzr.styleSheets[c];
-			doc.write("<style rel='text/css'>" + patchStyleSheet( parseJSONStyleSheet( stylesheet ) ) + "</style>");
+			stylesheet = slvzr.styleSheets[c].text;
+			media = slvzr.styleSheets[c].media;
+			doc.write("<style rel='text/css'" + (media ? " media='" + media + "' " : "") + ">" + patchStyleSheet( parseJSONStyleSheet( stylesheet ) ) + "</style>");
 		}
 	}
 
